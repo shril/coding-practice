@@ -1,12 +1,15 @@
 package union_find;
 
-public class OptimisedUnionFind {
+public class UnionFindFinal {
 
-    private final int[] rank;
     private final int[] root;
-    public OptimisedUnionFind(int size) {
-        rank = new int[size];
+    private final int[] rank;
+    private int count;
+
+    public UnionFindFinal(int size) {
         root = new int[size];
+        rank = new int[size];
+        count = size;
         for (int i = 0; i < size; i++) {
             root[i] = i;
             rank[i] = 1;
@@ -14,17 +17,21 @@ public class OptimisedUnionFind {
     }
 
     public int find(int x) {
-        // if we are at the parent node, we return value
         if (x != root[x]) {
-            root[x] = find(x);
+            root[x] = find(root[x]);
         }
-        // doing path compression for all other nodes
         return root[x];
     }
 
-    public void union(int x, int y) {
+    public boolean union(int x, int y) {
         int rootX = find(x);
         int rootY = find(y);
+
+        // the nodes are already connected
+        if (rootX == rootY) {
+            return false;
+        }
+
         if (rank[rootX] > rank[rootY]) {
             root[rootY] = rootX;
         } else if (rank[rootX] < rank[rootY]) {
@@ -33,9 +40,15 @@ public class OptimisedUnionFind {
             root[rootY] = rootX;
             rank[rootX] += 1;
         }
+        count--;
+        return true;
     }
 
     public boolean connected(int x, int y) {
         return find(x) == find(y);
+    }
+
+    public int getCount() {
+        return count;
     }
 }
